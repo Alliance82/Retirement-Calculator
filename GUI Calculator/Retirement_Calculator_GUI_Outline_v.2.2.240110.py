@@ -196,8 +196,10 @@ entry7.grid(row=7, column=2, pady=10)
 btn_convert = tk.Button(
     master=window,
     text="Calculate",
-    command=save_progress  # <--- Add this line
+    command=save_progress
 )
 btn_convert.grid(column=9, row=9)
+
+tk.Button(window, text="Show Yes/No Popup", command=MyApp.show_yesno_popup)
 
 window.mainloop()
