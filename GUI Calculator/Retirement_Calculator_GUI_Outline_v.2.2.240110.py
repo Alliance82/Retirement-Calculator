@@ -12,128 +12,140 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-def clear_form():
-    entry1.delete(0, tk.END)
-    entry2.delete(0, tk.END)
-    entry3.delete(0, tk.END)
-    entry4.delete(0, tk.END)
-    entry5.delete(0, tk.END)
-    entry6.delete(0, tk.END)
-    entry7.delete(0, tk.END)
-
-def calc_invest():
-
-    inv_nam = i_nam.get()
-    current_age_p1 = float(c_age.get())
-    retirement_age_p1 = float(r_age.get())
-    start_savings_p1 = float(c_sav.get())
-    income_p1 = float(c_inc.get())
-    saving_pct_p1 = float(sav_rt.get())
-    match_p1 = float(c_mat.get())
-     
-    # Savings
-    savings_p1 = []
-    savings_p2 = []
-
-    # Loop Values
-    i = 0
-    r = 0
-    compound_savings_p1 = 0
-    compound_savings_p2 = 0
-
-    # Using a range of interest rates to show projections based on reasonable return rates
-    pre_interest_rate = [0.06, 0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15]
-    post_interest_rate = [0.04, 0.05, 0.06, 0.07, 0.08]
-    income_growth = 0.03
-    end_age = 100
-
-    years_before_retire_p1 = retirement_age_p1 - current_age_p1
-
-    # Loop for Person 1
-    age = current_age_p1
-    while age < end_age:
-        
-        i = i + 1
-        age = current_age_p1 + i
-        if age <= retirement_age_p1:
-            
-            if i == 1:
-                savings_p1_float = (start_savings_p1 + income_p1*(saving_pct_p1+match_p1))
-            else:
-                savings_p1_float = (compound_savings_p1 + income_p1*(saving_pct_p1+match_p1))
-            
-            #for x in range(len(pre_interest_rate)):
-            compound_savings_p1 = savings_p1_float * (1 + pre_interest_rate[2])
-            income_p1 = income_p1 * (1 + income_growth)
-            if age == retirement_age_p1:
-                retirement_income_p1 = income_p1 * (1.00)
-                print(f"Person 1's retirement income {retirement_income_p1}")
-            else:
-                pass
-        else:        
-            savings_p1_float = (compound_savings_p1 - retirement_income_p1)
-            compound_savings_p1 = savings_p1_float * (1 + post_interest_rate[1])
-            
-        # Storing the persons age and savings
-        savings_p1.append((age, round(compound_savings_p1,2)))
-
-    # NEED TO UPDATE THE BELOW WHEN Loop is complete
-    #total_savings = [(x[0], x[1]) for x in zip(savings_p1)]
-    total_savings = savings_p1
-
-    # Create a DataFrame to plot
-    df = pd.DataFrame(total_savings, columns=['age', 'savings'])
-
-
-    total_income = df = pd.DataFrame(total_savings, columns=['age', 'savings'])
-    # Amount you are making at retirement
-    retirement_income = (.8) * total_income
-
-    # Outputting information to the user
-    print(f"At retirement Person 1 was making {retirement_income_p1}.")
-    print(f"In retirement most people spend 80% of pre-retirement income, so plan to withdraw: {retirement_income}.")
-    print(f"This is your total income: {total_income}.")
-
-    # Define the variables
-    total_at_retire = df.query(f'age == {retirement_age_p1}')['savings'].iloc[0]
-    print(f"At retirement age {retirement_age_p1}, you will have a total of: {total_at_retire}") 
-
-    # P: principal amount at retirement
-    # W: Max yearly withdrawl amount in retirement
-    # r: annual interest rate
-    # n: number of years
-    # t: number of times the interest is compounded per year
-    t = 1
-    P = total_at_retire
-    r = post_interest_rate[1] # annual interest rate
-    n = end_age - retirement_age_p1 # number of compounding periods per year
-
-    # Calculate the withdrawal amount
-    W = round(((((1+r)**n)*(r*P))/((1+r)**n-1)),2)
-    print(f"The maximum amount that you could withdraw every year to deplete the funds by {end_age} would be {W}")
-
-    # Will output to the location the Python file is in
-    save_file = 'Retirement_Savings_Calculator_Output.xlsx'
-    df.to_excel(save_file, sheet_name='Savings_Data', index=False)
-    os.startfile(save_file)
+class MyApp:
     
-    return df
+    def save_progress():
+        response = messagebox.askyesno("Confirmation", "Do you want to continue with the calculation?")
+        if response:
+            print("Continuing with the calculation...")
+            
+        else:
+            print("Calculation canceled.")
+            
+    def clear_form():
+        entry1.delete(0, tk.END)
+        entry2.delete(0, tk.END)
+        entry3.delete(0, tk.END)
+        entry4.delete(0, tk.END)
+        entry5.delete(0, tk.END)
+        entry6.delete(0, tk.END)
+        entry7.delete(0, tk.END)
 
-def plot_sav(df):
-    # Setting the variables to be plotted and plotting the savings against age
-    x = df['age']
-    y = df['savings']
-    plt.plot(x, y, marker='o')
-    plt.xlabel('Age')
-    plt.ylabel('Savings')
-    plt.show()
+    def calc_invest():
 
-# Class to clear out the entries
-def save_progress():
-    # Calling the calculation, passing the DataFrame, then clearing the form
-    df_result = calc_invest()
-    plot_sav(df_result)
-    clear_form()
+        inv_nam = i_nam.get()
+        current_age_p1 = float(c_age.get())
+        retirement_age_p1 = float(r_age.get())
+        start_savings_p1 = float(c_sav.get())
+        income_p1 = float(c_inc.get())
+        saving_pct_p1 = float(sav_rt.get())
+        match_p1 = float(c_mat.get())
+        
+        # Savings
+        savings_p1 = []
+        savings_p2 = []
+
+        # Loop Values
+        i = 0
+        r = 0
+        compound_savings_p1 = 0
+        compound_savings_p2 = 0
+
+        # Using a range of interest rates to show projections based on reasonable return rates
+        pre_interest_rate = [0.06, 0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15]
+        post_interest_rate = [0.04, 0.05, 0.06, 0.07, 0.08]
+        income_growth = 0.03
+        end_age = 100
+
+        years_before_retire_p1 = retirement_age_p1 - current_age_p1
+
+        # Loop for Person 1
+        age = current_age_p1
+        while age < end_age:
+            
+            i = i + 1
+            age = current_age_p1 + i
+            if age <= retirement_age_p1:
+                
+                if i == 1:
+                    savings_p1_float = (start_savings_p1 + income_p1*(saving_pct_p1+match_p1))
+                else:
+                    savings_p1_float = (compound_savings_p1 + income_p1*(saving_pct_p1+match_p1))
+                
+                #for x in range(len(pre_interest_rate)):
+                compound_savings_p1 = savings_p1_float * (1 + pre_interest_rate[2])
+                income_p1 = income_p1 * (1 + income_growth)
+                if age == retirement_age_p1:
+                    retirement_income_p1 = income_p1 * (1.00)
+                    print(f"Person 1's retirement income {retirement_income_p1}")
+                else:
+                    pass
+            else:        
+                savings_p1_float = (compound_savings_p1 - retirement_income_p1)
+                compound_savings_p1 = savings_p1_float * (1 + post_interest_rate[1])
+                
+            # Storing the persons age and savings
+            savings_p1.append((age, round(compound_savings_p1,2)))
+
+        # NEED TO UPDATE THE BELOW WHEN Loop is complete
+        #total_savings = [(x[0], x[1]) for x in zip(savings_p1)]
+        total_savings = savings_p1
+
+        # Create a DataFrame to plot
+        df = pd.DataFrame(total_savings, columns=['age', 'savings'])
+
+
+        total_income = df = pd.DataFrame(total_savings, columns=['age', 'savings'])
+        # Amount you are making at retirement
+        retirement_income = (.8) * total_income
+
+        # Outputting information to the user
+        print(f"At retirement Person 1 was making {retirement_income_p1}.")
+        print(f"In retirement most people spend 80% of pre-retirement income, so plan to withdraw: {retirement_income}.")
+        print(f"This is your total income: {total_income}.")
+
+        # Define the variables
+        total_at_retire = df.query(f'age == {retirement_age_p1}')['savings'].iloc[0]
+        print(f"At retirement age {retirement_age_p1}, you will have a total of: {total_at_retire}") 
+
+        # P: principal amount at retirement
+        # W: Max yearly withdrawl amount in retirement
+        # r: annual interest rate
+        # n: number of years
+        # t: number of times the interest is compounded per year
+        t = 1
+        P = total_at_retire
+        r = post_interest_rate[1] # annual interest rate
+        n = end_age - retirement_age_p1 # number of compounding periods per year
+
+        # Calculate the withdrawal amount
+        W = round(((((1+r)**n)*(r*P))/((1+r)**n-1)),2)
+        print(f"The maximum amount that you could withdraw every year to deplete the funds by {end_age} would be {W}")
+        
+        return df
+
+    def plot_sav(df):
+        # Setting the variables to be plotted and plotting the savings against age
+        x = df['age']
+        y = df['savings']
+        plt.plot(x, y, marker='o')
+        plt.xlabel('Age')
+        plt.ylabel('Savings')
+        plt.show()
+
+    def output_excel(df):
+        # Will output to the location the Python file is in
+        save_file = 'Retirement_Savings_Calculator_Output.xlsx'
+        df.to_excel(save_file, sheet_name='Savings_Data', index=False)
+        os.startfile(save_file)
+        
+    def call_all():
+        # Calling the calculation, passing the DataFrame, then clearing the form
+        df_result = MyApp.calc_invest()
+        MyApp.plot_sav(df_result)
+        MyApp.save_progress()
+        MyApp.clear_form()
+        MyApp.output_excel(df_result)
 
 window = tk.Tk()
 window.title("Investment Calculator")
@@ -193,13 +205,13 @@ c_mat = tk.StringVar()
 entry7 = ttk.Entry(window, textvariable=c_mat)
 entry7.grid(row=7, column=2, pady=10)
 
+my_app_instance = MyApp()
+
 btn_convert = tk.Button(
     master=window,
     text="Calculate",
-    command=save_progress
+    command=MyApp.call_all
 )
 btn_convert.grid(column=9, row=9)
-
-tk.Button(window, text="Show Yes/No Popup", command=MyApp.show_yesno_popup)
 
 window.mainloop()
