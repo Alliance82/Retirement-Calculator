@@ -163,9 +163,6 @@ window.title("Investment Calculator")
 # Set the window state to 'zoomed' for full screen
 window.wm_state('zoomed')
 
-# This will store each of the variables
-inv_list = []
-
 # Creating the form with labels and entry boxes. Creating the variables for the user entry.
 label1 = ttk.Label(window, text="Investment Name")
 label1.grid(row=1, column=0, pady=10)
